@@ -28,7 +28,21 @@ def add_task(task, desc=None):
                      description=desc)
 
 
-tools = [add_task]
+@tool
+def show_tasks():
+    """
+    Show all tasks from Todoist. Use this when the user wants to see their tasks.
+    :return: A list of user's tasks
+    """
+    resultsPaginator = todoist.get_tasks()
+    tasks = []
+    for taskList in resultsPaginator:
+        for task in taskList:
+            tasks.append(task.content)
+    return tasks
+
+
+tools = [add_task, show_tasks]
 #  LLM initialization
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -38,7 +52,9 @@ llm = ChatGoogleGenerativeAI(
 
 # Prompt construction
 systemPrompt = """
-You are a helpful assistant. You will help the user add tasks.
+You are a helpful assistant. 
+You will help the user add tasks.
+You will help the user show their existing tasks.
 You will also answer questions.
 """
 
